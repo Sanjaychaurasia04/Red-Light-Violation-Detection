@@ -594,7 +594,12 @@ def api_violations():
     return jsonify(violations_detail)
 
 if __name__ == '__main__':
+    import os
+
+    port = int(os.environ.get("PORT", 5000))  # Render gives the port in $PORT
+
     logger.info("🚀 Traffic Violation Detection System Started!")
-    logger.info("🌐 http://localhost:5000")
+    logger.info(f"🌐 Listening on 0.0.0.0:{port}")
     logger.info("📝 All data stored in memory (no database)")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+
+    app.run(debug=False, host='0.0.0.0', port=port)
