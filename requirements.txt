@@ -1,11 +1,8 @@
-Flask>=2.3.3
-opencv-python>=4.8.1.78
-numpy>=2.0.0
-matplotlib>=3.7.2
-Pillow>=10.0.0
-pytesseract>=0.3.10
-easyocr>=1.7.0
-
-# For building packages like numpy from source if needed
+Flask==2.3.3
+opencv-python-headless==4.8.1.78
+numpy==1.26.4
+matplotlib==3.8.4
+Pillow==10.4.0
+pytesseract==0.3.10
 setuptools>=68.0.0
 wheel
