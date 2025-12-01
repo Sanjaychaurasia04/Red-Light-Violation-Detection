@@ -1,0 +1,537 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="hero-section mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold mb-3">Traffic Violation Detection System</h1>
+            <p class="lead text-muted mb-4">
+                Advanced AI-powered system to automatically detect red light violations with real-time processing and analytics.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <a href="/upload" class="btn btn-primary btn-lg px-4 py-3">
+                    <i class="fas fa-upload me-2"></i>Upload Video
+                </a>
+                <a href="/demo" class="btn btn-success btn-lg px-4 py-3">
+                    <i class="fas fa-play-circle me-2"></i>Run Demo
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-4 text-center d-none d-lg-block">
+            <div class="hero-icon">
+                <i class="fas fa-traffic-light"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- MAIN CONTENT -->
+    <div class="col-lg-8">
+        <!-- FEATURES CARD -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>System Features
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-traffic-light"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">Traffic Light Detection</h6>
+                                <p class="small text-muted mb-0">Advanced detection of signal violations in real-time</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">YOLO Vehicle Detection</h6>
+                                <p class="small text-muted mb-0">Precise bounding box detection with high accuracy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">License Plate OCR</h6>
+                                <p class="small text-muted mb-0">Dual OCR engine with Tesseract & EasyOCR</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">Live Violation Tracking</h6>
+                                <p class="small text-muted mb-0">Real-time logging and alerting system</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">Database Storage</h6>
+                                <p class="small text-muted mb-0">Automated storage and retrieval of all records</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-item d-flex">
+                            <div class="feature-icon me-3">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">Analytics Dashboard</h6>
+                                <p class="small text-muted mb-0">Comprehensive reporting and insights</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRAFFIC RULES & SAFETY SECTION -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-book-open me-2"></i>Traffic Rules & Safe Driving Guidelines
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Traffic Light Rules -->
+                <div class="rules-section mb-4">
+                    <h6 class="fw-bold text-danger mb-3">
+                        <i class="fas fa-traffic-light me-2"></i>Traffic Signal Rules
+                    </h6>
+                    <ul class="rules-list">
+                        <li><strong>Red Light:</strong> Stop completely behind the stop line. Never cross an intersection when the light is red.</li>
+                        <li><strong>Yellow Light:</strong> Prepare to stop unless you're too close to stop safely.</li>
+                        <li><strong>Green Light:</strong> Proceed with caution after checking that the intersection is clear.</li>
+                        <li><strong>Flashing Red:</strong> Treat as a stop sign - stop completely, then proceed when safe.</li>
+                        <li><strong>Flashing Yellow:</strong> Slow down and proceed with extra caution.</li>
+                    </ul>
+                </div>
+
+                <!-- General Road Safety -->
+                <div class="rules-section mb-4">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="fas fa-shield-alt me-2"></i>General Road Safety Rules
+                    </h6>
+                    <ul class="rules-list">
+                        <li><strong>Speed Limits:</strong> Always obey posted speed limits and adjust speed for weather conditions.</li>
+                        <li><strong>Lane Discipline:</strong> Stay in your lane, use turn signals before changing lanes.</li>
+                        <li><strong>Safe Distance:</strong> Maintain a safe following distance (3-second rule minimum).</li>
+                        <li><strong>Pedestrian Priority:</strong> Always yield to pedestrians at crosswalks.</li>
+                        <li><strong>School Zones:</strong> Reduce speed in school zones and watch for children.</li>
+                        <li><strong>Emergency Vehicles:</strong> Pull over and stop when emergency vehicles approach with sirens.</li>
+                    </ul>
+                </div>
+
+                <!-- Safe Driving Tips -->
+                <div class="rules-section mb-4">
+                    <h6 class="fw-bold text-success mb-3">
+                        <i class="fas fa-hands-helping me-2"></i>Safe Driving Best Practices
+                    </h6>
+                    <ul class="rules-list">
+                        <li><strong>Stay Focused:</strong> Avoid distractions like mobile phones, eating, or adjusting controls while driving.</li>
+                        <li><strong>Wear Seatbelts:</strong> Ensure all passengers wear seatbelts at all times.</li>
+                        <li><strong>Check Mirrors:</strong> Regularly check rear-view and side mirrors for awareness.</li>
+                        <li><strong>Weather Awareness:</strong> Slow down during rain, fog, or adverse weather conditions.</li>
+                        <li><strong>Night Driving:</strong> Use headlights properly and avoid high beams in traffic.</li>
+                        <li><strong>No Impaired Driving:</strong> Never drive under the influence of alcohol or drugs.</li>
+                        <li><strong>Rest When Tired:</strong> Take breaks on long journeys to avoid fatigue.</li>
+                    </ul>
+                </div>
+
+                <!-- Penalties Warning -->
+                <div class="alert alert-warning mb-0">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Violation Consequences
+                    </h6>
+                    <p class="mb-0 small">
+                        Traffic violations can result in fines, license points, increased insurance premiums, 
+                        and in serious cases, license suspension or legal action. This system helps enforce 
+                        traffic laws to keep our roads safe for everyone.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLEAR DATABASE BUTTON -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <p class="text-muted mb-3">Need to reset the system? This will clear all violation records.</p>
+                <form method="POST" action="/clear_database" class="d-inline-block">
+                    <button type="submit" class="btn btn-danger px-4" 
+                        onclick="return confirm('Are you sure you want to clear all violations? This action cannot be undone.')">
+                        <i class="fas fa-trash-alt me-2"></i>Clear Database
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-4">
+        <!-- SYSTEM STATUS -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-server me-2"></i>System Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="status-list">
+                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
+                        <span>Flask Server</span>
+                        <span class="badge bg-success">Running</span>
+                    </div>
+                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
+                        <span>OpenCV</span>
+                        <span class="badge bg-success">Loaded</span>
+                    </div>
+                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
+                        <span>YOLO Model</span>
+                        <span class="badge {% if YOLO_AVAILABLE %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ 'Available' if YOLO_AVAILABLE else 'Unavailable' }}
+                        </span>
+                    </div>
+                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
+                        <span>Tesseract OCR</span>
+                        <span class="badge {% if TESSERACT_AVAILABLE %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ 'Available' if TESSERACT_AVAILABLE else 'Unavailable' }}
+                        </span>
+                    </div>
+                    <div class="status-item d-flex justify-content-between align-items-center">
+                        <span>EasyOCR</span>
+                        <span class="badge {% if EASYOCR_AVAILABLE %}bg-success{% else %}bg-warning{% endif %}">
+                            {{ 'Available' if EASYOCR_AVAILABLE else 'Unavailable' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK SAFETY TIPS -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Quick Safety Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="safety-tip-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <div class="tip-icon me-2">
+                            <i class="fas fa-mobile-alt text-danger"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">Tip #1</small>
+                            <p class="mb-0 small fw-semibold">Keep your phone away while driving</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="safety-tip-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <div class="tip-icon me-2">
+                            <i class="fas fa-stopwatch text-warning"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">Tip #2</small>
+                            <p class="mb-0 small fw-semibold">Follow the 3-second following rule</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="safety-tip-item p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <div class="tip-icon me-2">
+                            <i class="fas fa-user-shield text-success"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">Tip #3</small>
+                            <p class="mb-0 small fw-semibold">Always wear your seatbelt</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT VIOLATIONS -->
+        {% if violations %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Recent Violations
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="violation-list">
+                    {% for plate, count in violations[:5] %}
+                    <div class="violation-item d-flex justify-content-between align-items-center p-3 border-bottom">
+                        <div class="d-flex align-items-center">
+                            <div class="license-plate-badge me-3">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">{{ plate }}</h6>
+                                <small class="text-muted">License Plate</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-danger rounded-pill px-3 py-2">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if violations|length > 5 %}
+                <div class="text-center p-3">
+                    <small class="text-muted">... and {{ violations|length - 5 }} more violations</small>
+                </div>
+                {% endif %}
+                
+                <div class="p-3 bg-light">
+                    <div class="d-grid">
+                        <a href="#" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list me-1"></i>View All Violations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ALL VIOLATIONS TABLE -->
+{% if violations %}
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-table me-2"></i>All Violations
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>License Plate</th>
+                                <th>Violation Count</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plate, count in violations %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="license-plate-icon me-3">
+                                            <i class="fas fa-id-card"></i>
+                                        </div>
+                                        <div>
+                                            <strong>{{ plate }}</strong>
+                                            <div class="small text-muted">Detected vehicle</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger px-3 py-2 fs-6">{{ count }}</span>
+                                </td>
+                                <td>
+                                    {% if count > 5 %}
+                                    <span class="badge bg-danger">High Priority</span>
+                                    {% elif count > 2 %}
+                                    <span class="badge bg-warning">Medium Priority</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Low Priority</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.hero-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(102, 16, 242, 0.05) 100%);
+    border-radius: var(--radius);
+    margin-top: 1rem;
+}
+
+.hero-icon {
+    font-size: 6rem;
+    color: var(--primary);
+    opacity: 0.8;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(102, 16, 242, 0.1) 100%);
+    color: var(--primary);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.license-plate-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--danger);
+}
+
+.license-plate-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--primary);
+}
+
+.violation-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.status-item {
+    padding: 8px 0;
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--dark);
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Traffic Rules Section Styles */
+.rules-section {
+    border-left: 4px solid var(--primary);
+    padding-left: 20px;
+}
+
+.rules-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rules-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f3f4;
+    line-height: 1.6;
+}
+
+.rules-list li:last-child {
+    border-bottom: none;
+}
+
+.rules-list strong {
+    color: var(--dark);
+}
+
+.safety-tip-item {
+    transition: all 0.2s ease;
+}
+
+.safety-tip-item:hover {
+    background-color: #e9ecef !important;
+    transform: translateX(5px);
+}
+
+.tip-icon {
+    font-size: 1.2rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .hero-icon {
+        font-size: 4rem;
+        margin-top: 1rem;
+    }
+    
+    .feature-item {
+        margin-bottom: 1rem;
+    }
+    
+    .rules-section {
+        border-left: 3px solid var(--primary);
+        padding-left: 15px;
+    }
+}
+</style>
+
+{% endblock %}

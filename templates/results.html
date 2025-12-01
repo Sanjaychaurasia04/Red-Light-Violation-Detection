@@ -1,0 +1,649 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+
+        <!-- MAIN RESULTS CARD -->
+        <div class="card results-card">
+            <div class="card-header success-header">
+                <div class="d-flex align-items-center">
+                    <div class="header-icon me-3">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Processing Complete</h4>
+                        <p class="mb-0 opacity-75">Video analysis finished successfully</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <!-- SUCCESS SUMMARY -->
+                <div class="success-summary">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="success-badge me-3">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-success mb-1">Analysis Complete!</h3>
+                                    <p class="text-muted mb-0">Video processed successfully with detailed violation report</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="violation-count-display">
+                                <span class="count">{{ total_violations }}</span>
+                                <span class="label">Violations Detected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROCESSING STATS -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="stat-icon video">
+                                <i class="fas fa-film"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">1</div>
+                                <div class="stat-label">Video Processed</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="stat-icon violations">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ total_violations }}</div>
+                                <div class="stat-label">Total Violations</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="stat-icon plates">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">{{ plates|length if plates else 0 }}</div>
+                                <div class="stat-label">License Plates</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="stat-icon status">
+                                <i class="fas fa-flag-checkered"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">100%</div>
+                                <div class="stat-label">Processing Complete</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETECTED LICENSE PLATES -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h5>
+                            <i class="fas fa-id-card me-2"></i>
+                            Detected License Plates
+                        </h5>
+                        <span class="badge badge-count">{{ plates|length if plates else 0 }}</span>
+                    </div>
+                    
+                    {% if plates %}
+                    <div class="plates-grid">
+                        {% for plate in plates %}
+                        <div class="plate-card">
+                            <div class="plate-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div class="plate-content">
+                                <div class="plate-number">{{ plate }}</div>
+                                <div class="plate-status">
+                                    <span class="badge violation-badge">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        Violation Detected
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="plate-actions">
+                                <button class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h5>No License Plates Detected</h5>
+                        <p class="text-muted">No license plates were identified in the processed video.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- VIOLATION TIMELINE -->
+                {% if plates %}
+                <div class="section-card">
+                    <div class="section-header">
+                        <h5>
+                            <i class="fas fa-history me-2"></i>
+                            Violation Timeline
+                        </h5>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker success"></div>
+                            <div class="timeline-content">
+                                <h6>Video Processing Started</h6>
+                                <p class="text-muted mb-0">Initial frame analysis began</p>
+                                <small class="text-muted">00:00</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker warning"></div>
+                            <div class="timeline-content">
+                                <h6>First Violation Detected</h6>
+                                <p class="text-muted mb-0">Red light violation identified</p>
+                                <small class="text-muted">00:15</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker warning"></div>
+                            <div class="timeline-content">
+                                <h6>Multiple Violations Recorded</h6>
+                                <p class="text-muted mb-0">Several vehicles detected running red lights</p>
+                                <small class="text-muted">01:30</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker success"></div>
+                            <div class="timeline-content">
+                                <h6>Processing Completed</h6>
+                                <p class="text-muted mb-0">All frames analyzed successfully</p>
+                                <small class="text-muted">02:45</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- ACTION BUTTONS -->
+                <div class="action-section">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <a href="/download/{{ video_filename }}" class="btn btn-success btn-action w-100">
+                                <div class="btn-content">
+                                    <i class="fas fa-download"></i>
+                                    <div>
+                                        <span class="btn-title">Download Video</span>
+                                        <small class="btn-subtitle">Processed with annotations</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/upload" class="btn btn-primary btn-action w-100">
+                                <div class="btn-content">
+                                    <i class="fas fa-upload"></i>
+                                    <div>
+                                        <span class="btn-title">Process Another</span>
+                                        <small class="btn-subtitle">Upload new video</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="/" class="btn btn-outline-secondary btn-action w-100">
+                                <div class="btn-content">
+                                    <i class="fas fa-home"></i>
+                                    <div>
+                                        <span class="btn-title">Back to Home</span>
+                                        <small class="btn-subtitle">Return to dashboard</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="quick-actions mt-4">
+                        <div class="row g-2">
+                            <div class="col-auto">
+                                <button class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-chart-bar me-1"></i>
+                                    Generate Report
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-share-alt me-1"></i>
+                                    Share Results
+                                </button>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-archive me-1"></i>
+                                    Archive Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.results-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.success-header {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+    padding: 2rem;
+    color: white;
+}
+
+.success-header .header-icon {
+    font-size: 2.5rem;
+    opacity: 0.9;
+}
+
+.success-summary {
+    background: linear-gradient(135deg, #f8fff9, #f0f9ff);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e3fcef;
+}
+
+.success-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.violation-count-display {
+    text-align: center;
+}
+
+.violation-count-display .count {
+    display: block;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #dc3545;
+    line-height: 1;
+}
+
+.violation-count-display .label {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Stat Boxes */
+.stat-box {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.video { background: linear-gradient(135deg, #17a2b8, #20c997); }
+.stat-icon.violations { background: linear-gradient(135deg, #dc3545, #e35d6a); }
+.stat-icon.plates { background: linear-gradient(135deg, #6f42c1, #8c68cd); }
+.stat-icon.status { background: linear-gradient(135deg, #28a745, #20c997); }
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #333;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Section Cards */
+.section-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.section-header h5 {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+    flex: 1;
+}
+
+.badge-count {
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+    color: white;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/* License Plates Grid */
+.plates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.plate-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.plate-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-color: #17a2b8;
+}
+
+.plate-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.plate-content {
+    flex: 1;
+}
+
+.plate-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.violation-badge {
+    background: linear-gradient(135deg, #dc3545, #e35d6a);
+    color: white;
+    border: none;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #666;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h5 {
+    color: #999;
+    margin-bottom: 0.5rem;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-marker.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.timeline-marker.warning {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 1.25rem;
+    border-radius: 12px;
+    border-left: 4px solid #17a2b8;
+}
+
+.timeline-content h6 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+/* Action Buttons */
+.action-section {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.btn-action {
+    border: none;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: left;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-action:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-content i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.btn-title {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.btn-subtitle {
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+}
+
+/* Quick Actions */
+.quick-actions {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .success-header {
+        padding: 1.5rem;
+    }
+    
+    .success-summary {
+        padding: 1.5rem;
+        text-align: center;
+    }
+    
+    .plates-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        padding: 1.25rem;
+    }
+    
+    .stat-box {
+        padding: 1rem 0.5rem;
+    }
+}
+</style>
+
+<script>
+// Add some interactive elements
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate stats counting up
+    const statNumbers = document.querySelectorAll('.stat-number');
+    statNumbers.forEach(stat => {
+        const target = parseInt(stat.textContent);
+        if (!isNaN(target)) {
+            animateCount(stat, 0, target, 1500);
+        }
+    });
+    
+    // Add click effects to plate cards
+    const plateCards = document.querySelectorAll('.plate-card');
+    plateCards.forEach(card => {
+        card.addEventListener('click', function() {
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+});
+
+function animateCount(element, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const value = Math.floor(progress * (end - start) + start);
+        element.textContent = value;
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+</script>
+
+{% endblock %}

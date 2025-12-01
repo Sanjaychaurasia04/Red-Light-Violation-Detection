@@ -1,0 +1,703 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+
+        <!-- Upload Card -->
+        <div class="card upload-card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <div class="header-icon me-3">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Upload Traffic Video</h4>
+                        <p class="mb-0 opacity-75">Process your traffic footage for violation detection</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    
+                    <!-- Drag & Drop Zone -->
+                    <div class="upload-zone mb-4" id="uploadZone">
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h5>Drop your video here</h5>
+                            <p class="text-muted">or click to browse files</p>
+                            <div class="supported-formats">
+                                <span class="format-badge">MP4</span>
+                                <span class="format-badge">AVI</span>
+                                <span class="format-badge">MOV</span>
+                                <span class="format-badge">MKV</span>
+                                <span class="format-badge">WebM</span>
+                            </div>
+                        </div>
+                        <input 
+                            class="form-control d-none" 
+                            id="video" 
+                            type="file" 
+                            name="video" 
+                            accept="video/*" 
+                            required
+                        >
+                    </div>
+
+                    <!-- File Info Display -->
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <div class="file-card">
+                            <div class="file-icon">
+                                <i class="fas fa-file-video"></i>
+                            </div>
+                            <div class="file-details">
+                                <h6 class="file-name mb-1" id="fileName">filename.mp4</h6>
+                                <div class="file-meta">
+                                    <span class="file-size" id="fileSize">0 MB</span>
+                                    <span class="file-duration" id="fileDuration">0:00</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-remove" id="removeFile">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Processing Options -->
+                    <div class="options-section mb-4">
+                        <h6 class="section-title">
+                            <i class="fas fa-cog me-2"></i>Processing Options
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <div class="option-content">
+                                        <label class="form-label fw-semibold">OCR Engine</label>
+                                        <select class="form-select" name="ocr_engine">
+                                            <option value="auto">Auto-select (Recommended)</option>
+                                            <option value="tesseract">Tesseract OCR</option>
+                                            <option value="easyocr">EasyOCR</option>
+                                            <option value="both">Both Engines</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="option-card">
+                                    <div class="option-icon">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="option-content">
+                                        <label class="form-label fw-semibold">Processing Speed</label>
+                                        <select class="form-select" name="processing_speed">
+                                            <option value="standard">Standard Quality</option>
+                                            <option value="balanced">Balanced</option>
+                                            <option value="fast">Fast Processing</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar (Hidden by default) -->
+                    <div class="upload-progress mb-4" id="uploadProgress" style="display: none;">
+                        <div class="progress-info d-flex justify-content-between mb-2">
+                            <span class="fw-semibold">Uploading...</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="submitBtn">
+                                <i class="fas fa-play-circle me-2"></i>
+                                <span class="btn-text">Start Processing</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" role="status"></div>
+                            </button>
+                            
+                            <a href="/" class="btn btn-outline-secondary btn-lg px-4 py-3">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Tips & Information Cards -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="info-card tips-card">
+                    <div class="card-header">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Tips for Best Results
+                    </div>
+                    <div class="card-body">
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h6>Good Lighting</h6>
+                                <p>Use clear, well-lit videos for better detection</p>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-traffic-light"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h6>Visible Signals</h6>
+                                <p>Ensure traffic lights are clearly visible in frame</p>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-id-card-alt"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h6>License Plates</h6>
+                                <p>Front-facing plates provide best OCR accuracy</p>
+                            </div>
+                        </div>
+                        <div class="tip-item">
+                            <div class="tip-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h6>Video Length</h6>
+                                <p>Shorter videos (1-5 minutes) process faster</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="info-card specs-card">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Technical Specifications
+                    </div>
+                    <div class="card-body">
+                        <div class="spec-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span><strong>Max File Size:</strong> 100MB</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span><strong>Supported Formats:</strong> MP4, AVI, MOV, MKV, WebM</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span><strong>Processing Time:</strong> 1-10 minutes</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span><strong>Resolution:</strong> Up to 4K supported</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span><strong>Detection:</strong> YOLO + Custom Models</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.upload-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.upload-card .card-header {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    border: none;
+    padding: 2rem;
+    color: white;
+}
+
+.header-icon {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+/* Upload Zone */
+.upload-zone {
+    border: 3px dashed #dee2e6;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+    position: relative;
+}
+
+.upload-zone:hover {
+    border-color: #0d6efd;
+    background: #f0f8ff;
+}
+
+.upload-zone.dragover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #0d6efd;
+    margin-bottom: 1rem;
+}
+
+.upload-content h5 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.supported-formats {
+    margin-top: 1rem;
+}
+
+.format-badge {
+    display: inline-block;
+    background: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #666;
+    margin: 0.25rem;
+    border: 1px solid #dee2e6;
+}
+
+/* File Info */
+.file-info {
+    margin-bottom: 1.5rem;
+}
+
+.file-card {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e3f2fd;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.file-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.file-details {
+    flex: 1;
+}
+
+.file-name {
+    color: #333;
+    font-weight: 600;
+}
+
+.file-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.file-meta span {
+    display: flex;
+    align-items: center;
+}
+
+.file-meta span::before {
+    content: '•';
+    margin-right: 0.5rem;
+    color: #999;
+}
+
+.file-meta span:first-child::before {
+    content: '';
+    margin: 0;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.btn-remove:hover {
+    background: #ffe6e6;
+    transform: scale(1.1);
+}
+
+/* Options Section */
+.options-section {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.section-title {
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.option-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+    height: 100%;
+}
+
+.option-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #6f42c1, #8c68cd);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.option-content {
+    flex: 1;
+}
+
+/* Progress Bar */
+.upload-progress {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid #e3f2fd;
+}
+
+.progress {
+    height: 12px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.progress-percent {
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+/* Action Buttons */
+.action-buttons {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 2rem;
+}
+
+.btn {
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Info Cards */
+.info-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    height: 100%;
+}
+
+.info-card .card-header {
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 1.25rem;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.tips-card .card-header {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+}
+
+.specs-card .card-header {
+    background: linear-gradient(135deg, #6f42c1, #8c68cd);
+}
+
+.info-card .card-body {
+    padding: 1.5rem;
+}
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.tip-item:last-child {
+    margin-bottom: 0;
+}
+
+.tip-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.tip-content h6 {
+    color: #333;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.tip-content p {
+    color: #666;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.spec-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .upload-zone {
+        padding: 2rem 1rem;
+    }
+    
+    .upload-icon {
+        font-size: 2.5rem;
+    }
+    
+    .file-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .file-meta {
+        justify-content: center;
+    }
+    
+    .option-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .action-buttons .d-md-flex {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('video');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fileDuration = document.getElementById('fileDuration');
+    const removeFile = document.getElementById('removeFile');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    const progressPercent = uploadProgress.querySelector('.progress-percent');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const spinner = submitBtn.querySelector('.spinner-border');
+
+    // Drag and drop functionality
+    uploadZone.addEventListener('click', () => fileInput.click());
+    
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+        }
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+
+    // Remove file
+    removeFile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.value = '';
+        fileInfo.style.display = 'none';
+        uploadZone.style.display = 'block';
+    });
+
+    // Form submission
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        if (!fileInput.files.length) {
+            e.preventDefault();
+            alert('Please select a video file to upload.');
+            return;
+        }
+        
+        // Show loading state
+        btnText.textContent = 'Processing...';
+        spinner.classList.remove('d-none');
+        submitBtn.disabled = true;
+    });
+
+    function handleFileSelect(file) {
+        if (!file.type.startsWith('video/')) {
+            alert('Please select a valid video file.');
+            return;
+        }
+
+        // Check file size (100MB limit)
+        const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+        if (file.size > maxSize) {
+            alert('File size exceeds 100MB limit. Please choose a smaller file.');
+            return;
+        }
+
+        // Update file info
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        
+        // Simulate duration detection (in real app, this would use a video API)
+        setTimeout(() => {
+            fileDuration.textContent = '2:45'; // Simulated duration
+        }, 500);
+
+        // Show file info and hide upload zone
+        fileInfo.style.display = 'block';
+        uploadZone.style.display = 'none';
+
+        // Simulate upload progress (in real app, this would be actual upload progress)
+        simulateUploadProgress();
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function simulateUploadProgress() {
+        uploadProgress.style.display = 'block';
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 10;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+            }
+            progressBar.style.width = progress + '%';
+            progressPercent.textContent = Math.round(progress) + '%';
+        }, 200);
+    }
+});
+</script>
+
+{% endblock %}

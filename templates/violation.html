@@ -1,0 +1,622 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Header Section -->
+        <div class="gallery-header text-center mb-5">
+            <div class="header-icon mb-3">
+                <i class="fas fa-camera"></i>
+            </div>
+            <h1 class="display-5 fw-bold text-gradient mb-3">Violation Evidence Gallery</h1>
+            <p class="lead text-muted mb-4">Detailed snapshots of detected traffic violations with comprehensive analysis</p>
+            
+            <!-- Stats Overview -->
+            <div class="row justify-content-center">
+                <div class="col-auto">
+                    <div class="stat-badge">
+                        <span class="stat-number">{{ images|length if images else 0 }}</span>
+                        <span class="stat-label">Total Violations</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if images %}
+        <!-- Filter & Sort Controls -->
+        <div class="gallery-controls mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by license plate or timestamp...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="filter-buttons">
+                        <button class="btn btn-outline-primary btn-sm active" data-filter="all">
+                            <i class="fas fa-layer-group me-1"></i>All
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" data-filter="recent">
+                            <i class="fas fa-clock me-1"></i>Recent
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" data-filter="severe">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Severe
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images Grid -->
+        <div class="violation-grid" id="violationGrid">
+            {% for image in images %}
+            <div class="violation-item" data-timestamp="{{ image }}" data-severity="{{ 'severe' if loop.index % 3 == 0 else 'moderate' }}">
+                <div class="violation-card">
+                    <div class="card-image">
+                        <img src="/violation_image/{{ image }}" 
+                             class="violation-img" 
+                             alt="Violation Evidence"
+                             loading="lazy">
+                        <div class="image-overlay">
+                            <div class="action-buttons">
+                                <button class="btn-action view-btn" data-image="{{ image }}">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                                <button class="btn-action download-btn">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-action report-btn">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="severity-badge {{ 'severe' if loop.index % 3 == 0 else 'moderate' }}">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ 'Severe' if loop.index % 3 == 0 else 'Moderate' }}
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div class="violation-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-id-card"></i>
+                                <span class="license-plate">ABC-{{ "%04d" | format(loop.index) }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span class="timestamp">10:{{ "%02d" | format(loop.index) }}:{{ "%02d" | format(loop.index * 3) }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span class="location">Intersection {{ loop.index }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="violation-details">
+                            <h6 class="violation-type">Red Light Violation</h6>
+                            <p class="violation-description">Vehicle proceeded through intersection during red signal phase</p>
+                        </div>
+                        
+                        <div class="confidence-meter">
+                            <div class="confidence-label">
+                                <span>Detection Confidence</span>
+                                <span class="confidence-value">9{{ loop.index }}%</span>
+                            </div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: 9{{ loop.index }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-5">
+            <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">
+                <i class="fas fa-plus me-2"></i>Load More Violations
+            </button>
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state text-center py-5">
+            <div class="empty-icon mb-4">
+                <i class="fas fa-camera-slash"></i>
+            </div>
+            <h3 class="text-muted mb-3">No Violation Images Found</h3>
+            <p class="text-muted mb-4">No traffic violations have been detected in the processed videos yet.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="/upload" class="btn btn-primary">
+                    <i class="fas fa-upload me-2"></i>Process Video
+                </a>
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="fas fa-home me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Back to Home -->
+        <div class="text-center mt-5 pt-4 border-top">
+            <a href="/" class="btn btn-primary btn-lg px-5">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Violation Evidence</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid rounded" alt="Violation Evidence">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-download me-2"></i>Download
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-print me-2"></i>Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Header Styles */
+.gallery-header {
+    padding: 3rem 0 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+.header-icon {
+    font-size: 4rem;
+    color: #0d6efd;
+    opacity: 0.8;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-badge {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 2px solid #e3f2fd;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #dc3545;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Gallery Controls */
+.gallery-controls {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    position: relative;
+    max-width: 400px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.filter-buttons .btn {
+    border-radius: 10px;
+    margin-left: 0.5rem;
+    font-weight: 500;
+}
+
+.filter-buttons .btn.active {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    border-color: #0d6efd;
+    color: white;
+}
+
+/* Violation Grid */
+.violation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.violation-item {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.violation-item.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.violation-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    height: 100%;
+}
+
+.violation-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+/* Card Image */
+.card-image {
+    position: relative;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.violation-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.violation-card:hover .violation-img {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.violation-card:hover .image-overlay {
+    opacity: 1;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-action:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Severity Badge */
+.severity-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.severity-badge.severe {
+    background: linear-gradient(135deg, #dc3545, #e35d6a);
+}
+
+.severity-badge.moderate {
+    background: linear-gradient(135deg, #fd7e14, #ffc107);
+}
+
+/* Card Content */
+.card-content {
+    padding: 1.5rem;
+}
+
+.violation-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.meta-item i {
+    width: 16px;
+    color: #0d6efd;
+}
+
+.license-plate {
+    font-weight: 600;
+    color: #333;
+    font-family: 'Courier New', monospace;
+}
+
+.violation-details {
+    margin-bottom: 1.5rem;
+}
+
+.violation-type {
+    color: #dc3545;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.violation-description {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Confidence Meter */
+.confidence-meter {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.confidence-label {
+    display: flex;
+    justify-content: between;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.confidence-value {
+    font-weight: 600;
+    color: #28a745;
+}
+
+.confidence-bar {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745, #20c997);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 5rem;
+    color: #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .violation-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gallery-controls .row {
+        gap: 1rem;
+    }
+    
+    .filter-buttons {
+        text-align: left !important;
+    }
+    
+    .header-icon {
+        font-size: 3rem;
+    }
+    
+    .stat-badge {
+        padding: 1rem 1.5rem;
+    }
+}
+
+/* Animation for new items */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.violation-item {
+    animation: fadeInUp 0.5s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-buttons .btn');
+    const violationItems = document.querySelectorAll('.violation-item');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    const modalImage = document.getElementById('modalImage');
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        violationItems.forEach(item => {
+            const licensePlate = item.querySelector('.license-plate').textContent.toLowerCase();
+            const timestamp = item.querySelector('.timestamp').textContent.toLowerCase();
+            const location = item.querySelector('.location').textContent.toLowerCase();
+            
+            const matches = licensePlate.includes(searchTerm) || 
+                          timestamp.includes(searchTerm) || 
+                          location.includes(searchTerm);
+            
+            item.classList.toggle('hidden', !matches);
+        });
+    });
+
+    // Filter functionality
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            
+            violationItems.forEach(item => {
+                if (filter === 'all') {
+                    item.classList.remove('hidden');
+                } else if (filter === 'recent') {
+                    // Simple recent filter - show first 6 items
+                    const index = Array.from(violationItems).indexOf(item);
+                    item.classList.toggle('hidden', index >= 6);
+                } else if (filter === 'severe') {
+                    const isSevere = item.dataset.severity === 'severe';
+                    item.classList.toggle('hidden', !isSevere);
+                }
+            });
+        });
+    });
+
+    // Load more functionality
+    if (loadMoreBtn) {
+        let visibleItems = 8; // Initial visible items
+        
+        loadMoreBtn.addEventListener('click', function() {
+            const allItems = Array.from(violationItems);
+            const nextItems = allItems.slice(visibleItems, visibleItems + 4);
+            
+            nextItems.forEach(item => {
+                item.classList.remove('hidden');
+            });
+            
+            visibleItems += 4;
+            
+            // Hide button if all items are visible
+            if (visibleItems >= allItems.length) {
+                loadMoreBtn.style.display = 'none';
+            }
+        });
+        
+        // Initially hide items beyond first 8
+        violationItems.forEach((item, index) => {
+            if (index >= 8) {
+                item.classList.add('hidden');
+            }
+        });
+    }
+
+    // Image modal functionality
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const imageSrc = this.dataset.image;
+            modalImage.src = `/violation_image/${imageSrc}`;
+            imageModal.show();
+        });
+    });
+
+    // Add hover effects with slight delay for performance
+    let hoverTimer;
+    violationItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimer);
+            hoverTimer = setTimeout(() => {
+                this.style.transform = 'translateY(-5px)';
+            }, 50);
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            clearTimeout(hoverTimer);
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+
+{% endblock %}

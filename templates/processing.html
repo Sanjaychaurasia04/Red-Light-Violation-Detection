@@ -1,0 +1,591 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <!-- PROCESSING CARD -->
+        <div class="card processing-card">
+            <div class="card-header">
+                <h4 class="mb-0 fw-semibold">
+                    <i class="fas fa-sync-alt me-2"></i>Processing Your Video
+                </h4>
+            </div>
+
+            <div class="card-body text-center">
+                <!-- ANIMATED PROCESSING VISUAL -->
+                <div class="processing-visual my-4">
+                    <div class="traffic-light-animation">
+                        <div class="light red active"></div>
+                        <div class="light yellow"></div>
+                        <div class="light green"></div>
+                    </div>
+                    <div class="vehicle-animation">
+                        <i class="fas fa-car"></i>
+                    </div>
+                </div>
+
+                <!-- STATUS TEXT -->
+                <h5 id="statusText" class="fw-semibold status-text mb-4">Initializing processing system...</h5>
+
+                <!-- PROGRESS BAR -->
+                <div class="progress-container mb-4">
+                    <div class="progress-info d-flex justify-content-between mb-2">
+                        <small class="text-muted">Processing Progress</small>
+                        <small class="text-muted fw-bold" id="progressText">0%</small>
+                    </div>
+                    <div class="progress custom-progress">
+                        <div id="progressBar" 
+                             class="progress-bar" 
+                             role="progressbar" 
+                             aria-valuenow="0" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STATS CARDS -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="stat-card violation-count">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="violationsCount">0</div>
+                                <div class="stat-label">Violations</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card frame-count">
+                            <div class="stat-icon">
+                                <i class="fas fa-film"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="framesProcessed">0</div>
+                                <div class="stat-label">Frames</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CURRENT ACTIVITY -->
+                <div class="activity-tracker mb-4">
+                    <div class="activity-item active">
+                        <div class="activity-dot"></div>
+                        <div class="activity-text">Video Uploaded</div>
+                    </div>
+                    <div class="activity-item" id="activityProcessing">
+                        <div class="activity-dot"></div>
+                        <div class="activity-text">Processing Frames</div>
+                    </div>
+                    <div class="activity-item" id="activityDetection">
+                        <div class="activity-dot"></div>
+                        <div class="activity-text">Vehicle Detection</div>
+                    </div>
+                    <div class="activity-item" id="activityAnalysis">
+                        <div class="activity-dot"></div>
+                        <div class="activity-text">Violation Analysis</div>
+                    </div>
+                    <div class="activity-item" id="activityComplete">
+                        <div class="activity-dot"></div>
+                        <div class="activity-text">Results Ready</div>
+                    </div>
+                </div>
+
+                <!-- INFO ALERT -->
+                <div class="alert alert-info custom-alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Processing in progress</strong> - This may take several minutes depending on video length and resolution
+                </div>
+
+                <!-- COMPLETION SECTION -->
+                <div id="completionSection" class="completion-section">
+                    <div class="success-animation mb-3">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="alert alert-success custom-alert mb-4">
+                        <h5 class="fw-semibold mb-2">Processing Complete!</h5>
+                        <p class="mb-0">Video analysis finished successfully. Ready to view detailed results.</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="#" id="resultsLink" class="btn btn-success btn-lg">
+                            <i class="fas fa-chart-bar me-2"></i>View Detailed Results
+                        </a>
+                        <a href="/upload" class="btn btn-outline-primary">
+                            <i class="fas fa-upload me-2"></i>Process Another Video
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ERROR SECTION -->
+                <div id="errorSection" class="error-section">
+                    <div class="error-animation mb-3">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="alert alert-danger custom-alert mb-4">
+                        <h5 class="fw-semibold mb-2">Processing Error</h5>
+                        <p id="errorMessage" class="mb-0">An unexpected error occurred during processing</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="/upload" class="btn btn-warning">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const jobId = '{{ job_id }}';
+let checkCount = 0;
+let currentStage = 0;
+
+const statusMessages = {
+    queued: "Waiting in queue...",
+    processing: "Analyzing video frames...",
+    detecting: "Detecting vehicles and traffic signals...",
+    analyzing: "Analyzing potential violations...",
+    finalizing: "Finalizing results..."
+};
+
+function updateProgress(data) {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const statusText = document.getElementById('statusText');
+    const violationsCount = document.getElementById('violationsCount');
+    const framesProcessed = document.getElementById('framesProcessed');
+    
+    // Update progress bar
+    progressBar.style.width = data.progress + '%';
+    progressBar.setAttribute('aria-valuenow', data.progress);
+    progressText.textContent = data.progress + '%';
+    
+    // Update statistics
+    violationsCount.textContent = data.violations || 0;
+    framesProcessed.textContent = data.frames_processed || Math.floor(data.progress * 2.5);
+    
+    // Update status message
+    if (data.status === 'processing') {
+        const message = statusMessages[data.stage] || "Processing your video...";
+        statusText.textContent = message;
+        
+        // Update activity tracker
+        updateActivityTracker(data.stage);
+    }
+    
+    // Add pulse animation when progress updates
+    progressBar.classList.add('progress-pulse');
+    setTimeout(() => progressBar.classList.remove('progress-pulse'), 500);
+}
+
+function updateActivityTracker(stage) {
+    const stages = ['queued', 'processing', 'detecting', 'analyzing', 'finalizing'];
+    const currentIndex = stages.indexOf(stage);
+    
+    if (currentIndex > currentStage) {
+        currentStage = currentIndex;
+        
+        // Update activity items
+        document.querySelectorAll('.activity-item').forEach((item, index) => {
+            if (index <= currentIndex + 1) {
+                item.classList.add('active');
+            }
+        });
+    }
+}
+
+function checkProgress() {
+    checkCount++;
+    fetch(`/api/status/${jobId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Progress update:', data);
+            
+            if (data.status === 'completed') {
+                // Final update
+                updateProgress({...data, progress: 100, stage: 'finalizing'});
+                
+                // Show completion section
+                setTimeout(() => {
+                    document.getElementById('statusText').textContent = 'Processing Complete!';
+                    document.getElementById('progressBar').classList.add('completed');
+                    document.getElementById('completionSection').style.display = 'block';
+                    document.getElementById('resultsLink').href = `/results/${jobId}`;
+                    
+                    // Stop animations
+                    document.querySelector('.traffic-light-animation').classList.add('completed');
+                    document.querySelector('.vehicle-animation').classList.add('completed');
+                }, 1000);
+                
+            } else if (data.status === 'error') {
+                document.getElementById('errorMessage').textContent = data.error || 'An unknown error occurred during processing';
+                document.getElementById('errorSection').style.display = 'block';
+                document.getElementById('statusText').style.display = 'none';
+                
+                // Show error state in animations
+                document.querySelector('.traffic-light-animation').classList.add('error');
+                
+            } else if (data.status === 'queued' || data.status === 'processing') {
+                updateProgress(data);
+
+                // Continue checking (with timeout protection)
+                if (checkCount < 3600) {
+                    setTimeout(checkProgress, 2000);
+                } else {
+                    document.getElementById('errorMessage').textContent = 'Processing timeout exceeded. Please try again with a shorter video.';
+                    document.getElementById('errorSection').style.display = 'block';
+                }
+            } else {
+                document.getElementById('errorMessage').textContent = 'Job not found or expired';
+                document.getElementById('errorSection').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error checking progress:', error);
+            if (checkCount < 10) {
+                setTimeout(checkProgress, 3000);
+            } else {
+                document.getElementById('errorMessage').textContent = 'Failed to connect to server. Please check your internet connection.';
+                document.getElementById('errorSection').style.display = 'block';
+            }
+        });
+}
+
+// Initialize
+setTimeout(checkProgress, 1000);
+</script>
+
+<style>
+.processing-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.processing-card .card-header {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    border: none;
+    padding: 1.5rem;
+    color: white;
+}
+
+/* Processing Visual */
+.processing-visual {
+    position: relative;
+    height: 120px;
+    margin: 2rem 0;
+}
+
+.traffic-light-animation {
+    position: absolute;
+    left: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.traffic-light-animation .light {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    opacity: 0.3;
+    transition: all 0.5s ease;
+}
+
+.traffic-light-animation .light.red {
+    background: #dc3545;
+}
+
+.traffic-light-animation .light.yellow {
+    background: #ffc107;
+}
+
+.traffic-light-animation .light.green {
+    background: #28a745;
+}
+
+.traffic-light-animation .light.active {
+    opacity: 1;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.traffic-light-animation.completed .light.green {
+    opacity: 1;
+    box-shadow: 0 0 20px #28a745;
+}
+
+.traffic-light-animation.error .light.red {
+    opacity: 1;
+    box-shadow: 0 0 20px #dc3545;
+    animation: pulse-red 1s infinite;
+}
+
+.vehicle-animation {
+    position: absolute;
+    right: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    color: #17a2b8;
+    animation: drive 3s ease-in-out infinite;
+}
+
+.vehicle-animation.completed {
+    animation: none;
+    color: #28a745;
+}
+
+@keyframes drive {
+    0%, 100% { 
+        transform: translateY(-50%) translateX(0);
+        color: #17a2b8;
+    }
+    50% { 
+        transform: translateY(-50%) translateX(-100px);
+        color: #138496;
+    }
+}
+
+@keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Progress Bar */
+.progress-container {
+    text-align: left;
+}
+
+.custom-progress {
+    height: 12px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.custom-progress .progress-bar {
+    background: linear-gradient(90deg, #17a2b8, #20c997);
+    border-radius: 10px;
+    transition: width 0.8s ease;
+    position: relative;
+}
+
+.custom-progress .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.custom-progress .progress-bar.completed {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+.custom-progress .progress-bar.progress-pulse {
+    animation: progress-pulse 0.5s ease;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes progress-pulse {
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(1.02); }
+    100% { transform: scaleX(1); }
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.violation-count .stat-icon {
+    background: linear-gradient(135deg, #dc3545, #e35d6a);
+}
+
+.frame-count .stat-icon {
+    background: linear-gradient(135deg, #17a2b8, #20c997);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Activity Tracker */
+.activity-tracker {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin: 2rem 0;
+}
+
+.activity-tracker::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: #f0f0f0;
+    z-index: 1;
+}
+
+.activity-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.activity-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    margin-bottom: 0.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.activity-text {
+    font-size: 0.75rem;
+    color: #999;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.activity-item.active .activity-dot {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.activity-item.active .activity-text {
+    color: #17a2b8;
+    font-weight: 600;
+}
+
+/* Alerts */
+.custom-alert {
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Completion & Error Sections */
+.completion-section,
+.error-section {
+    display: none;
+}
+
+.success-animation,
+.error-animation {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.success-animation {
+    color: #28a745;
+    animation: success-bounce 0.6s ease;
+}
+
+.error-animation {
+    color: #dc3545;
+    animation: error-shake 0.6s ease;
+}
+
+@keyframes success-bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
+}
+
+@keyframes error-shake {
+    0%, 100% {transform: translateX(0);}
+    25% {transform: translateX(-5px);}
+    75% {transform: translateX(5px);}
+}
+
+/* Status Text */
+.status-text {
+    color: #495057;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .processing-visual {
+        height: 100px;
+    }
+    
+    .vehicle-animation {
+        font-size: 2rem;
+    }
+    
+    .activity-tracker {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .activity-item {
+        flex: 0 0 calc(50% - 0.5rem);
+    }
+}
+</style>
+
+{% endblock %}
