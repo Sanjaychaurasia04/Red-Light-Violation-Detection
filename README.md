@@ -42,8 +42,7 @@ This project is suitable for **smart traffic surveillance**, **law enforcement a
 ### Frontend
 - HTML  
 - CSS  
-- JavaScript  
-- Jinja2 Templates  
+- JavaScript   
 
 ### Storage
 - In-memory data structures  
@@ -75,6 +74,9 @@ traffic-violation-detection/
 ├── traffic_video.mp4           # Demo video (optional)
 ├── requirements.txt
 └── README.md
+
+```
+
 ⚙️ Installation & Setup
 1️⃣ Clone the Repository
 
@@ -82,7 +84,7 @@ traffic-violation-detection/
 git clone https://github.com/your-username/traffic-violation-detection.git
 cd traffic-violation-detection
 ```
-2️⃣ Create Virtual Environment (Recommended)
+2️⃣ Create Virtual Environment 
 ```
 python -m venv venv
 source venv/bin/activate   # Linux / Mac
@@ -96,8 +98,7 @@ pip install -r requirements.txt
 OCR Setup
 ✅ Tesseract OCR
 
-Download from:
-https://github.com/tesseract-ocr/tesseract
+Download from: https://github.com/tesseract-ocr/tesseract
 
 Update path in code (already included):
 ```
@@ -117,7 +118,7 @@ python app.py
 
 Server runs at: http://localhost:5000
 
-```
+
 
 ## 🔄 Working Logic (Pipeline)
 ```
